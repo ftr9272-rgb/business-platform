@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X, User, LogOut, Bell, Store, Truck, Box, Shield, Home, ShoppingBag } from 'lucide-react';
+import { Menu, X, User, LogOut, Bell, Store, Truck, Box, Shield, Home, ShoppingBag, Sparkles } from 'lucide-react';
 import ChatButton from './ChatButton';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -53,296 +53,373 @@ function Header() {
   }, []);
 
   return (
-    <header className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 border-b border-slate-700/50 sticky top-0 z-50 shadow-lg">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-16 relative">
-          
-          {/* الشعار على اليمين */}
-          <div className="flex items-center gap-4 order-3 md:order-1">
-            <Link to="/landing" className="flex items-center space-x-2 space-x-reverse group">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2"
-              >
-                <ShoppingBag className="w-7 h-7 text-blue-400" />
-                <span className="text-2xl font-bold text-white font-heading">تجارتنا الذكية</span>
-              </motion.div>
-            </Link>
-          </div>
-
-          {/* قائمة التنقل في المنتصف */}
-          <nav className="hidden md:flex items-center space-x-6 space-x-reverse order-2">
-            {!isAuthenticated ? (
-              <>
-                <Link 
-                  to="/enhanced-marketplace" 
-                  className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base"
-                >
-                  السوق المشترك
-                </Link>
+    <header className="fixed top-0 left-0 right-0 z-50">
+      {/* Gradient border at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-400 via-blue-500 via-purple-500 to-pink-500"></div>
+      
+      <nav className="bg-white/90 backdrop-blur-xl border-b border-gray-200/50 shadow-xl">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            
+            {/* Logo - Left Side */}
+            <Link to="/landing" className="flex items-center gap-3 group">
+              <div className="relative">
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-60 transition-all duration-500"></div>
                 
-                <Link 
-                  to="/exhibitions" 
-                  className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base"
-                >
-                  المعارض
-                </Link>
-              </>
-            ) : (
-              <div className="flex items-center space-x-4 space-x-reverse">
-                <Link 
-                  to="/enhanced-marketplace" 
-                  className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
-                >
-                  <Store className="w-4 h-4" />
-                  <span>السوق المشترك</span>
-                </Link>
+                {/* Icon */}
+                <div className="relative w-14 h-14 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <ShoppingBag className="w-7 h-7 text-white" strokeWidth={2.5} />
+                  <Sparkles className="w-4 h-4 text-yellow-300 absolute -top-1 -right-1 animate-pulse" />
+                </div>
+              </div>
+              
+              {/* Logo text */}
+              <div className="flex flex-col">
+                <span className="text-2xl font-black bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  تجارتنا
+                </span>
+                <span className="text-xs font-semibold text-gray-500 -mt-1">
+                  منصة التجارة الذكية
+                </span>
+              </div>
+            </Link>
 
-                {/* أيقونة الإشعارات */}
-                <div className="relative flex items-center gap-2">
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }} 
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => window.dispatchEvent(new Event('open-notifications'))} 
-                    aria-label="فتح الإشعارات" 
-                    className="p-2 rounded-lg hover:bg-slate-700/50 transition-all duration-300 relative"
+            {/* Navigation - Center */}
+            <nav className="hidden md:flex items-center gap-2">
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/landing"
+                    className="relative px-5 py-2.5 text-gray-700 hover:text-blue-600 font-semibold text-base transition-all duration-300 group"
                   >
-                    <Bell className="w-5 h-5 text-white" />
+                    <span className="relative z-10">الرئيسية</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                  </Link>
+                  
+                  <Link
+                    to="/enhanced-marketplace"
+                    className="relative px-5 py-2.5 text-gray-700 hover:text-blue-600 font-semibold text-base transition-all duration-300 group"
+                  >
+                    <span className="relative z-10">السوق المشترك</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                  </Link>
+                  
+                  <Link
+                    to="/exhibitions"
+                    className="relative px-5 py-2.5 text-gray-700 hover:text-purple-600 font-semibold text-base transition-all duration-300 group"
+                  >
+                    <span className="relative z-10">المعارض</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                  </Link>
+                  
+                  <Link
+                    to="/contact"
+                    className="relative px-5 py-2.5 text-gray-700 hover:text-cyan-600 font-semibold text-base transition-all duration-300 group"
+                  >
+                    <span className="relative z-10">اتصل بنا</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-50 to-teal-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/enhanced-marketplace"
+                    className="relative px-5 py-2.5 text-gray-700 hover:text-blue-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
+                  >
+                    <Store className="w-4 h-4 relative z-10" />
+                    <span className="relative z-10">السوق المشترك</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                  </Link>
+
+                  {/* Dashboard links */}
+                  {user?.role === 'shipping_company' && (
+                    <Link
+                      to="/shipping"
+                      className="relative px-5 py-2.5 text-gray-700 hover:text-orange-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
+                    >
+                      <Truck className="w-4 h-4 relative z-10" />
+                      <span className="relative z-10">لوحة التحكم</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                    </Link>
+                  )}
+                  
+                  {user?.role === 'merchant' && (
+                    <Link
+                      to="/merchant"
+                      className="relative px-5 py-2.5 text-gray-700 hover:text-purple-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
+                    >
+                      <Store className="w-4 h-4 relative z-10" />
+                      <span className="relative z-10">لوحة التحكم</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                    </Link>
+                  )}
+                  
+                  {user?.role === 'supplier' && (
+                    <Link
+                      to="/supplier"
+                      className="relative px-5 py-2.5 text-gray-700 hover:text-green-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
+                    >
+                      <Box className="w-4 h-4 relative z-10" />
+                      <span className="relative z-10">لوحة التحكم</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                    </Link>
+                  )}
+                  
+                  {user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      className="relative px-5 py-2.5 text-gray-700 hover:text-red-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
+                    >
+                      <Shield className="w-4 h-4 relative z-10" />
+                      <span className="relative z-10">لوحة التحكم</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-red-50 to-rose-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
+                    </Link>
+                  )}
+                </>
+              )}
+            </nav>
+
+            {/* Actions - Right Side */}
+            <div className="flex items-center gap-3">
+              {isAuthenticated ? (
+                <>
+                  {/* Notifications */}
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => window.dispatchEvent(new Event('open-notifications'))}
+                    className="relative p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all duration-300"
+                  >
+                    <Bell className="w-5 h-5 text-gray-700" />
                     {headerNotifCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
                         {headerNotifCount > 99 ? '99+' : headerNotifCount}
                       </span>
                     )}
                   </motion.button>
 
-                  {/* Chat button */}
+                  {/* Chat */}
                   <ChatButton
                     variant="inline"
                     ariaLabel="فتح المحادثات"
-                    className="p-0"
+                    className="p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all duration-300"
                     onClick={() => window.dispatchEvent(new Event('open-chat'))}
                     hasNotifications={false}
                     notificationCount={0}
                   />
-                </div>
-                
-                {/* روابط لوحات التحكم */}
-                {user?.role === 'shipping_company' && (
-                  <Link 
-                    to="/shipping" 
-                    className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
-                  >
-                    <Truck className="w-4 h-4" />
-                    <span>لوحة التحكم</span>
-                  </Link>
-                )}
-                
-                {user?.role === 'merchant' && (
-                  <Link 
-                    to="/merchant" 
-                    className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
-                  >
-                    <Store className="w-4 h-4" />
-                    <span>لوحة التحكم</span>
-                  </Link>
-                )}
-                
-                {user?.role === 'supplier' && (
-                  <Link 
-                    to="/supplier" 
-                    className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
-                  >
-                    <Box className="w-4 h-4" />
-                    <span>لوحة التحكم</span>
-                  </Link>
-                )}
-                
-                {user?.role === 'admin' && (
-                  <Link 
-                    to="/admin" 
-                    className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
-                  >
-                    <Shield className="w-4 h-4" />
-                    <span>لوحة التحكم</span>
-                  </Link>
-                )}
-              </div>
-            )}
-          </nav>
 
-          {/* الأزرار على اليسار */}
-          <div className="flex items-center space-x-3 space-x-reverse order-1 md:order-3">
-            {isAuthenticated ? (
-              <div className="relative flex items-center gap-2">
-                <div className="relative">
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }} 
-                    whileTap={{ scale: 0.95 }} 
-                    onClick={toggleProfile} 
-                    className="flex items-center space-x-2 space-x-reverse px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all duration-300 border border-slate-600"
-                  >
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="hidden sm:block text-sm font-arabic text-white font-medium">{user?.name}</span>
-                  </motion.button>
-
-                  {isProfileOpen && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }} 
-                      animate={{ opacity: 1, y: 0, scale: 1 }} 
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl py-2 overflow-hidden"
+                  {/* Profile */}
+                  <div className="relative">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={toggleProfile}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-300"
                     >
-                      <div className="px-4 py-3 bg-slate-700/50 border-b border-slate-600">
-                        <p className="text-sm font-arabic text-white font-bold">{user?.name}</p>
-                        <p className="text-xs text-slate-300 mt-0.5">{user?.email}</p>
-                        {user?.role && (
-                          <span className="inline-block mt-2 px-3 py-1 bg-blue-500/20 rounded-full text-xs text-blue-300 font-medium border border-blue-500/30">
-                            {getRoleDisplayName()}
-                          </span>
-                        )}
+                      <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                        <User className="w-4 h-4 text-white" />
                       </div>
+                      <span className="hidden sm:block text-sm font-bold text-gray-800">{user?.name}</span>
+                    </motion.button>
 
-                      <Link 
-                        to="/profile" 
-                        className="flex items-center space-x-2 space-x-reverse px-4 py-3 text-sm text-slate-200 hover:bg-slate-700/50 transition-all duration-300 font-arabic group" 
-                        onClick={() => setIsProfileOpen(false)}
+                    {isProfileOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        className="absolute left-0 mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-2xl py-2 overflow-hidden"
                       >
-                        <User className="w-4 h-4 text-slate-400 group-hover:text-blue-400 transition-colors" />
-                        <span className="group-hover:text-white transition-colors">الملف الشخصي</span>
-                      </Link>
+                        <div className="px-4 py-4 bg-gradient-to-r from-cyan-50 to-blue-50 border-b border-gray-200">
+                          <p className="text-sm font-bold text-gray-900">{user?.name}</p>
+                          <p className="text-xs text-gray-600 mt-1">{user?.email}</p>
+                          {user?.role && (
+                            <span className="inline-block mt-2 px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-xs text-white font-bold shadow-lg">
+                              {getRoleDisplayName()}
+                            </span>
+                          )}
+                        </div>
 
-                      <button 
-                        onClick={handleLogout} 
-                        className="flex items-center space-x-2 space-x-reverse px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-all duration-300 w-full font-arabic group"
-                      >
-                        <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        <span>تسجيل الخروج</span>
-                      </button>
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link 
-                    to="/contact" 
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg transition-all duration-300 font-arabic font-medium shadow-lg hover:shadow-xl text-base"
-                  >
-                    تسجيل الدخول
-                  </Link>
-                </motion.div>
-                
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link 
-                    to="/contact" 
-                    className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-lg transition-all duration-300 font-arabic font-medium shadow-lg hover:shadow-xl text-base"
-                  >
-                    إنشاء حساب
-                  </Link>
-                </motion.div>
-              </div>
-            )}
+                        <Link
+                          to="/profile"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-300 group"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <User className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
+                          <span className="font-semibold group-hover:text-blue-600 transition-colors">الملف الشخصي</span>
+                        </Link>
 
-            <motion.button 
-              whileHover={{ scale: 1.05 }} 
-              whileTap={{ scale: 0.95 }} 
-              onClick={toggleMenu} 
-              className="md:hidden p-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all duration-300" 
-              aria-label="قائمة التنقل"
-            >
-              {isMenuOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
-            </motion.button>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-all duration-300 w-full group"
+                        >
+                          <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                          <span className="font-semibold">تسجيل الخروج</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="hidden md:block">
+                    <Link
+                      to="/contact"
+                      className="px-6 py-2.5 text-gray-700 hover:text-blue-600 font-bold text-base transition-all duration-300 rounded-xl border-2 border-gray-300 hover:border-blue-400"
+                    >
+                      تسجيل الدخول
+                    </Link>
+                  </motion.div>
+
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="hidden md:block">
+                    <Link
+                      to="/contact"
+                      className="relative px-6 py-2.5 text-white font-bold text-base rounded-xl overflow-hidden group shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 group-hover:from-cyan-600 group-hover:via-blue-600 group-hover:to-purple-700 transition-all duration-300"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700"></div>
+                      <span className="relative z-10 flex items-center gap-2">
+                        إنشاء حساب
+                        <Sparkles className="w-4 h-4" />
+                      </span>
+                    </Link>
+                  </motion.div>
+                </>
+              )}
+
+              {/* Mobile menu button */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={toggleMenu}
+                className="md:hidden p-2.5 rounded-xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 transition-all duration-300"
+              >
+                {isMenuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
+              </motion.button>
+            </div>
           </div>
         </div>
 
-        {/* قائمة التنقل للموبايل */}
+        {/* Mobile menu */}
         {isMenuOpen && (
-          <motion.nav 
-            initial={{ opacity: 0, height: 0 }} 
-            animate={{ opacity: 1, height: 'auto' }} 
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden py-4 border-t border-slate-700/50 bg-slate-800/50 rounded-b-xl"
+            className="md:hidden border-t border-gray-200/50 bg-white/95 backdrop-blur-xl"
           >
-            {!isAuthenticated ? (
-              <div className="flex flex-col space-y-2">
-                <Link 
-                  to="/enhanced-marketplace" 
-                  className="text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  السوق المشترك
-                </Link>
-                <Link 
-                  to="/exhibitions" 
-                  className="text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  المعارض
-                </Link>
-              </div>
-            ) : (
-              <div className="flex flex-col space-y-2">
-                <Link 
-                  to="/enhanced-marketplace" 
-                  className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Store className="w-4 h-4" />
-                  <span>السوق المشترك</span>
-                </Link>
-                
-                {user?.role === 'shipping_company' && (
-                  <Link 
-                    to="/shipping" 
-                    className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+            <div className="container mx-auto px-6 py-6 space-y-3">
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/landing"
+                    className="block px-5 py-3 text-gray-700 hover:text-blue-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 transition-all duration-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Truck className="w-4 h-4" />
-                    <span>لوحة التحكم</span>
+                    الرئيسية
                   </Link>
-                )}
-                
-                {user?.role === 'merchant' && (
-                  <Link 
-                    to="/merchant" 
-                    className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                  
+                  <Link
+                    to="/enhanced-marketplace"
+                    className="block px-5 py-3 text-gray-700 hover:text-blue-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Store className="w-4 h-4" />
-                    <span>لوحة التحكم</span>
+                    السوق المشترك
                   </Link>
-                )}
-                
-                {user?.role === 'supplier' && (
-                  <Link 
-                    to="/supplier" 
-                    className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                  
+                  <Link
+                    to="/exhibitions"
+                    className="block px-5 py-3 text-gray-700 hover:text-purple-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Box className="w-4 h-4" />
-                    <span>لوحة التحكم</span>
+                    المعارض
                   </Link>
-                )}
-                
-                {user?.role === 'admin' && (
-                  <Link 
-                    to="/admin" 
-                    className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                  
+                  <Link
+                    to="/contact"
+                    className="block px-5 py-3 text-gray-700 hover:text-cyan-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-cyan-50 hover:to-teal-50 transition-all duration-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Shield className="w-4 h-4" />
-                    <span>لوحة التحكم</span>
+                    اتصل بنا
                   </Link>
-                )}
-              </div>
-            )}
-          </motion.nav>
+                  
+                  <div className="pt-4 space-y-3 border-t border-gray-200">
+                    <Link
+                      to="/contact"
+                      className="block px-5 py-3 text-center text-gray-700 hover:text-blue-600 font-bold text-base rounded-xl border-2 border-gray-300 hover:border-blue-400 transition-all duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      تسجيل الدخول
+                    </Link>
+                    
+                    <Link
+                      to="/contact"
+                      className="block px-5 py-3 text-center text-white font-bold text-base rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-700 shadow-lg transition-all duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      إنشاء حساب ✨
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/enhanced-marketplace"
+                    className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-blue-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Store className="w-5 h-5" />
+                    السوق المشترك
+                  </Link>
+
+                  {user?.role === 'merchant' && (
+                    <Link
+                      to="/merchant"
+                      className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-purple-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Store className="w-5 h-5" />
+                      لوحة التحكم
+                    </Link>
+                  )}
+
+                  {user?.role === 'supplier' && (
+                    <Link
+                      to="/supplier"
+                      className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-green-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Box className="w-5 h-5" />
+                      لوحة التحكم
+                    </Link>
+                  )}
+
+                  {user?.role === 'shipping_company' && (
+                    <Link
+                      to="/shipping"
+                      className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-orange-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 transition-all duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Truck className="w-5 h-5" />
+                      لوحة التحكم
+                    </Link>
+                  )}
+
+                  {user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-red-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-red-50 hover:to-rose-50 transition-all duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Shield className="w-5 h-5" />
+                      لوحة التحكم
+                    </Link>
+                  )}
+                </>
+              )}
+            </div>
+          </motion.div>
         )}
-      </div>
+      </nav>
     </header>
   );
 }
