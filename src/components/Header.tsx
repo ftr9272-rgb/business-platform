@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Menu, X, User, LogOut, Bell, Store, Truck, Box, Shield, Home, ShoppingBag, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, User, LogOut, Bell, Store, Truck, Box, Shield, ShoppingBag } from 'lucide-react';
 import ChatButton from './ChatButton';
-
 import { useAuth } from '../contexts/AuthContext';
 
 function Header() {
@@ -11,6 +10,7 @@ function Header() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
@@ -19,6 +19,15 @@ function Header() {
     logout();
     setIsProfileOpen(false);
   };
+
+  // Scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Function to get role display name
   const getRoleDisplayName = () => {
@@ -42,7 +51,6 @@ function Header() {
   useEffect(() => {
     const onUpdate = (e: Event) => {
       try {
-        // @ts-ignore
         const detail = (e as CustomEvent).detail || {};
         const count = typeof detail.unreadCount === 'number' ? detail.unreadCount : 0;
         setHeaderNotifCount(count);
@@ -53,187 +61,138 @@ function Header() {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      {/* Gradient border at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-400 via-blue-500 via-purple-500 to-pink-500"></div>
-      
-      <nav className="bg-white/90 backdrop-blur-xl border-b border-gray-200/50 shadow-xl">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white shadow-lg' 
+          : 'bg-gradient-to-b from-white via-white to-white/95'
+      }`}
+    >
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          
+          {/* Logo */}
+          <Link to="/landing" className="flex items-center gap-3 group">
+            <motion.div
+              whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+              transition={{ duration: 0.5 }}
+              className="relative"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                <ShoppingBag className="w-6 h-6 text-white" strokeWidth={2.5} />
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+            </motion.div>
             
-            {/* Logo - Left Side */}
-            <Link to="/landing" className="flex items-center gap-3 group">
-              <div className="relative">
-                {/* Glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-60 transition-all duration-500"></div>
+            <div className="flex flex-col">
+              <span className="text-xl font-black text-gray-900">تجارتنا الذكية</span>
+              <span className="text-xs text-gray-500 font-medium">منصة التجارة الإلكترونية</span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {!isAuthenticated ? (
+              <>
+                <NavLink to="/landing" active={location.pathname === '/landing'}>الرئيسية</NavLink>
+                <NavLink to="/enhanced-marketplace" active={location.pathname === '/enhanced-marketplace'}>السوق المشترك</NavLink>
+                <NavLink to="/exhibitions" active={location.pathname === '/exhibitions'}>المعارض</NavLink>
+                <NavLink to="/contact" active={location.pathname === '/contact'}>اتصل بنا</NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink to="/enhanced-marketplace" active={location.pathname === '/enhanced-marketplace'}>
+                  <Store className="w-4 h-4" />
+                  السوق المشترك
+                </NavLink>
+
+                {user?.role === 'merchant' && (
+                  <NavLink to="/merchant" active={location.pathname === '/merchant'}>
+                    <Store className="w-4 h-4" />
+                    لوحة التحكم
+                  </NavLink>
+                )}
                 
-                {/* Icon */}
-                <div className="relative w-14 h-14 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  <ShoppingBag className="w-7 h-7 text-white" strokeWidth={2.5} />
-                  <Sparkles className="w-4 h-4 text-yellow-300 absolute -top-1 -right-1 animate-pulse" />
-                </div>
-              </div>
-              
-              {/* Logo text */}
-              <div className="flex flex-col">
-                <span className="text-2xl font-black bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  تجارتنا
-                </span>
-                <span className="text-xs font-semibold text-gray-500 -mt-1">
-                  منصة التجارة الذكية
-                </span>
-              </div>
-            </Link>
+                {user?.role === 'supplier' && (
+                  <NavLink to="/supplier" active={location.pathname === '/supplier'}>
+                    <Box className="w-4 h-4" />
+                    لوحة التحكم
+                  </NavLink>
+                )}
+                
+                {user?.role === 'shipping_company' && (
+                  <NavLink to="/shipping" active={location.pathname === '/shipping'}>
+                    <Truck className="w-4 h-4" />
+                    لوحة التحكم
+                  </NavLink>
+                )}
+                
+                {user?.role === 'admin' && (
+                  <NavLink to="/admin" active={location.pathname === '/admin'}>
+                    <Shield className="w-4 h-4" />
+                    لوحة التحكم
+                  </NavLink>
+                )}
+              </>
+            )}
+          </nav>
 
-            {/* Navigation - Center */}
-            <nav className="hidden md:flex items-center gap-2">
-              {!isAuthenticated ? (
-                <>
-                  <Link
-                    to="/landing"
-                    className="relative px-5 py-2.5 text-gray-700 hover:text-blue-600 font-semibold text-base transition-all duration-300 group"
-                  >
-                    <span className="relative z-10">الرئيسية</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                  </Link>
-                  
-                  <Link
-                    to="/enhanced-marketplace"
-                    className="relative px-5 py-2.5 text-gray-700 hover:text-blue-600 font-semibold text-base transition-all duration-300 group"
-                  >
-                    <span className="relative z-10">السوق المشترك</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                  </Link>
-                  
-                  <Link
-                    to="/exhibitions"
-                    className="relative px-5 py-2.5 text-gray-700 hover:text-purple-600 font-semibold text-base transition-all duration-300 group"
-                  >
-                    <span className="relative z-10">المعارض</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                  </Link>
-                  
-                  <Link
-                    to="/contact"
-                    className="relative px-5 py-2.5 text-gray-700 hover:text-cyan-600 font-semibold text-base transition-all duration-300 group"
-                  >
-                    <span className="relative z-10">اتصل بنا</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-50 to-teal-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/enhanced-marketplace"
-                    className="relative px-5 py-2.5 text-gray-700 hover:text-blue-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
-                  >
-                    <Store className="w-4 h-4 relative z-10" />
-                    <span className="relative z-10">السوق المشترك</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                  </Link>
+          {/* Actions */}
+          <div className="flex items-center gap-3">
+            {isAuthenticated ? (
+              <>
+                {/* Notifications */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => window.dispatchEvent(new Event('open-notifications'))}
+                  className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <Bell className="w-5 h-5 text-gray-700" />
+                  {headerNotifCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                      {headerNotifCount > 99 ? '99+' : headerNotifCount}
+                    </span>
+                  )}
+                </motion.button>
 
-                  {/* Dashboard links */}
-                  {user?.role === 'shipping_company' && (
-                    <Link
-                      to="/shipping"
-                      className="relative px-5 py-2.5 text-gray-700 hover:text-orange-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
-                    >
-                      <Truck className="w-4 h-4 relative z-10" />
-                      <span className="relative z-10">لوحة التحكم</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                    </Link>
-                  )}
-                  
-                  {user?.role === 'merchant' && (
-                    <Link
-                      to="/merchant"
-                      className="relative px-5 py-2.5 text-gray-700 hover:text-purple-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
-                    >
-                      <Store className="w-4 h-4 relative z-10" />
-                      <span className="relative z-10">لوحة التحكم</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                    </Link>
-                  )}
-                  
-                  {user?.role === 'supplier' && (
-                    <Link
-                      to="/supplier"
-                      className="relative px-5 py-2.5 text-gray-700 hover:text-green-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
-                    >
-                      <Box className="w-4 h-4 relative z-10" />
-                      <span className="relative z-10">لوحة التحكم</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                    </Link>
-                  )}
-                  
-                  {user?.role === 'admin' && (
-                    <Link
-                      to="/admin"
-                      className="relative px-5 py-2.5 text-gray-700 hover:text-red-600 font-semibold text-base transition-all duration-300 group flex items-center gap-2"
-                    >
-                      <Shield className="w-4 h-4 relative z-10" />
-                      <span className="relative z-10">لوحة التحكم</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-red-50 to-rose-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100"></div>
-                    </Link>
-                  )}
-                </>
-              )}
-            </nav>
+                {/* Chat */}
+                <ChatButton
+                  variant="inline"
+                  ariaLabel="فتح المحادثات"
+                  className="p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
+                  onClick={() => window.dispatchEvent(new Event('open-chat'))}
+                  hasNotifications={false}
+                  notificationCount={0}
+                />
 
-            {/* Actions - Right Side */}
-            <div className="flex items-center gap-3">
-              {isAuthenticated ? (
-                <>
-                  {/* Notifications */}
+                {/* Profile */}
+                <div className="relative hidden lg:block">
                   <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => window.dispatchEvent(new Event('open-notifications'))}
-                    className="relative p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={toggleProfile}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
                   >
-                    <Bell className="w-5 h-5 text-gray-700" />
-                    {headerNotifCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
-                        {headerNotifCount > 99 ? '99+' : headerNotifCount}
-                      </span>
-                    )}
+                    <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">{user?.name}</span>
                   </motion.button>
 
-                  {/* Chat */}
-                  <ChatButton
-                    variant="inline"
-                    ariaLabel="فتح المحادثات"
-                    className="p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all duration-300"
-                    onClick={() => window.dispatchEvent(new Event('open-chat'))}
-                    hasNotifications={false}
-                    notificationCount={0}
-                  />
-
-                  {/* Profile */}
-                  <div className="relative">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={toggleProfile}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-300"
-                    >
-                      <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-                        <User className="w-4 h-4 text-white" />
-                      </div>
-                      <span className="hidden sm:block text-sm font-bold text-gray-800">{user?.name}</span>
-                    </motion.button>
-
+                  <AnimatePresence>
                     {isProfileOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        className="absolute left-0 mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-2xl py-2 overflow-hidden"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute left-0 mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden"
                       >
-                        <div className="px-4 py-4 bg-gradient-to-r from-cyan-50 to-blue-50 border-b border-gray-200">
+                        <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-b border-gray-200">
                           <p className="text-sm font-bold text-gray-900">{user?.name}</p>
                           <p className="text-xs text-gray-600 mt-1">{user?.email}</p>
                           {user?.role && (
-                            <span className="inline-block mt-2 px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-xs text-white font-bold shadow-lg">
+                            <span className="inline-block mt-2 px-3 py-1 bg-blue-600 rounded-lg text-xs text-white font-bold">
                               {getRoleDisplayName()}
                             </span>
                           )}
@@ -241,111 +200,77 @@ function Header() {
 
                         <Link
                           to="/profile"
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-300 group"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                           onClick={() => setIsProfileOpen(false)}
                         >
-                          <User className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
-                          <span className="font-semibold group-hover:text-blue-600 transition-colors">الملف الشخصي</span>
+                          <User className="w-4 h-4" />
+                          <span className="font-semibold">الملف الشخصي</span>
                         </Link>
 
                         <button
                           onClick={handleLogout}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-all duration-300 w-full group"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors w-full"
                         >
-                          <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                          <LogOut className="w-4 h-4" />
                           <span className="font-semibold">تسجيل الخروج</span>
                         </button>
                       </motion.div>
                     )}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="hidden md:block">
-                    <Link
-                      to="/contact"
-                      className="px-6 py-2.5 text-gray-700 hover:text-blue-600 font-bold text-base transition-all duration-300 rounded-xl border-2 border-gray-300 hover:border-blue-400"
-                    >
-                      تسجيل الدخول
-                    </Link>
-                  </motion.div>
+                  </AnimatePresence>
+                </div>
+              </>
+            ) : (
+              <div className="hidden lg:flex items-center gap-3">
+                <Link
+                  to="/contact"
+                  className="px-5 py-2.5 text-gray-700 hover:text-blue-600 font-bold text-sm transition-colors duration-200"
+                >
+                  تسجيل الدخول
+                </Link>
+                
+                <Link
+                  to="/contact"
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  إنشاء حساب
+                </Link>
+              </div>
+            )}
 
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="hidden md:block">
-                    <Link
-                      to="/contact"
-                      className="relative px-6 py-2.5 text-white font-bold text-base rounded-xl overflow-hidden group shadow-lg hover:shadow-xl transition-all duration-300"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 group-hover:from-cyan-600 group-hover:via-blue-600 group-hover:to-purple-700 transition-all duration-300"></div>
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700"></div>
-                      <span className="relative z-10 flex items-center gap-2">
-                        إنشاء حساب
-                        <Sparkles className="w-4 h-4" />
-                      </span>
-                    </Link>
-                  </motion.div>
-                </>
-              )}
-
-              {/* Mobile menu button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={toggleMenu}
-                className="md:hidden p-2.5 rounded-xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 transition-all duration-300"
-              >
-                {isMenuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
-              </motion.button>
-            </div>
+            {/* Mobile menu button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleMenu}
+              className="lg:hidden p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
+            >
+              {isMenuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
+            </motion.button>
           </div>
         </div>
+      </nav>
 
-        {/* Mobile menu */}
+      {/* Mobile menu */}
+      <AnimatePresence>
         {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-200/50 bg-white/95 backdrop-blur-xl"
+            className="lg:hidden border-t border-gray-200 bg-white"
           >
-            <div className="container mx-auto px-6 py-6 space-y-3">
+            <div className="container mx-auto px-4 py-4 space-y-2">
               {!isAuthenticated ? (
                 <>
-                  <Link
-                    to="/landing"
-                    className="block px-5 py-3 text-gray-700 hover:text-blue-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 transition-all duration-300"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    الرئيسية
-                  </Link>
+                  <MobileNavLink to="/landing" onClick={() => setIsMenuOpen(false)}>الرئيسية</MobileNavLink>
+                  <MobileNavLink to="/enhanced-marketplace" onClick={() => setIsMenuOpen(false)}>السوق المشترك</MobileNavLink>
+                  <MobileNavLink to="/exhibitions" onClick={() => setIsMenuOpen(false)}>المعارض</MobileNavLink>
+                  <MobileNavLink to="/contact" onClick={() => setIsMenuOpen(false)}>اتصل بنا</MobileNavLink>
                   
-                  <Link
-                    to="/enhanced-marketplace"
-                    className="block px-5 py-3 text-gray-700 hover:text-blue-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    السوق المشترك
-                  </Link>
-                  
-                  <Link
-                    to="/exhibitions"
-                    className="block px-5 py-3 text-gray-700 hover:text-purple-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-300"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    المعارض
-                  </Link>
-                  
-                  <Link
-                    to="/contact"
-                    className="block px-5 py-3 text-gray-700 hover:text-cyan-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-cyan-50 hover:to-teal-50 transition-all duration-300"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    اتصل بنا
-                  </Link>
-                  
-                  <div className="pt-4 space-y-3 border-t border-gray-200">
+                  <div className="pt-4 space-y-2 border-t border-gray-200">
                     <Link
                       to="/contact"
-                      className="block px-5 py-3 text-center text-gray-700 hover:text-blue-600 font-bold text-base rounded-xl border-2 border-gray-300 hover:border-blue-400 transition-all duration-300"
+                      className="block px-4 py-3 text-center text-gray-700 hover:text-blue-600 font-bold rounded-xl border-2 border-gray-200 hover:border-blue-600 transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       تسجيل الدخول
@@ -353,76 +278,103 @@ function Header() {
                     
                     <Link
                       to="/contact"
-                      className="block px-5 py-3 text-center text-white font-bold text-base rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-700 shadow-lg transition-all duration-300"
+                      className="block px-4 py-3 text-center text-white font-bold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      إنشاء حساب ✨
+                      إنشاء حساب
                     </Link>
                   </div>
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/enhanced-marketplace"
-                    className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-blue-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
+                  <MobileNavLink to="/enhanced-marketplace" onClick={() => setIsMenuOpen(false)}>
                     <Store className="w-5 h-5" />
                     السوق المشترك
-                  </Link>
+                  </MobileNavLink>
 
                   {user?.role === 'merchant' && (
-                    <Link
-                      to="/merchant"
-                      className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-purple-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-300"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
+                    <MobileNavLink to="/merchant" onClick={() => setIsMenuOpen(false)}>
                       <Store className="w-5 h-5" />
                       لوحة التحكم
-                    </Link>
+                    </MobileNavLink>
                   )}
 
                   {user?.role === 'supplier' && (
-                    <Link
-                      to="/supplier"
-                      className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-green-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-300"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
+                    <MobileNavLink to="/supplier" onClick={() => setIsMenuOpen(false)}>
                       <Box className="w-5 h-5" />
                       لوحة التحكم
-                    </Link>
+                    </MobileNavLink>
                   )}
 
                   {user?.role === 'shipping_company' && (
-                    <Link
-                      to="/shipping"
-                      className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-orange-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 transition-all duration-300"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
+                    <MobileNavLink to="/shipping" onClick={() => setIsMenuOpen(false)}>
                       <Truck className="w-5 h-5" />
                       لوحة التحكم
-                    </Link>
+                    </MobileNavLink>
                   )}
 
                   {user?.role === 'admin' && (
-                    <Link
-                      to="/admin"
-                      className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:text-red-600 font-semibold text-base rounded-xl hover:bg-gradient-to-r hover:from-red-50 hover:to-rose-50 transition-all duration-300"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
+                    <MobileNavLink to="/admin" onClick={() => setIsMenuOpen(false)}>
                       <Shield className="w-5 h-5" />
                       لوحة التحكم
-                    </Link>
+                    </MobileNavLink>
                   )}
+
+                  <div className="pt-4 border-t border-gray-200">
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User className="w-5 h-5" />
+                      <span className="font-semibold">الملف الشخصي</span>
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors w-full"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span className="font-semibold">تسجيل الخروج</span>
+                    </button>
+                  </div>
                 </>
               )}
             </div>
           </motion.div>
         )}
-      </nav>
+      </AnimatePresence>
     </header>
   );
 }
+
+// NavLink Component
+const NavLink = ({ to, active, children }: { to: string; active?: boolean; children: React.ReactNode }) => (
+  <Link
+    to={to}
+    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
+      active
+        ? 'bg-blue-600 text-white shadow-lg'
+        : 'text-gray-700 hover:bg-gray-100 hover:text-blue-600'
+    }`}
+  >
+    {children}
+  </Link>
+);
+
+// MobileNavLink Component
+const MobileNavLink = ({ to, onClick, children }: { to: string; onClick: () => void; children: React.ReactNode }) => (
+  <Link
+    to={to}
+    onClick={onClick}
+    className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded-xl font-semibold transition-colors"
+  >
+    {children}
+  </Link>
+);
 
 export default Header;
 
