@@ -122,7 +122,7 @@ const LandingPage = () => {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center px-5 py-2.5 bg-white/15 backdrop-blur-md border border-white/30 text-cyan-300 rounded-full text-sm font-medium mb-8 shadow-lg hover:shadow-cyan-500/20 transition-all"
+                className="inline-flex items-center px-5 py-2.5 bg-white/15 backdrop-blur-md border border-white/30 text-white rounded-full text-sm font-medium mb-8 shadow-lg hover:shadow-cyan-500/20 transition-all"
               >
                 <Award className="w-5 h-5 ml-2" />
                 منصة تجارية مخصصة للموردين، التجار، وشركات الشحن
@@ -154,7 +154,7 @@ const LandingPage = () => {
                     <p className="text-2xl md:text-3xl lg:text-4xl font-light leading-tight tracking-tight drop-shadow-lg">
                       نحن ننظم السوق وقراراتكم الإدارية والمالية تخصكم.
                     </p>
-                    <p className="mt-4 text-base text-cyan-200 font-medium">منصة تدعم الشفافية وتمكين القرار دون التدخل.</p>
+                    <p className="mt-4 text-base text-white/90 font-medium">منصة تدعم الشفافية وتمكين القرار دون التدخل.</p>
                   </motion.div>
 
                   {/* Right card: subtitle with enhanced styling */}
@@ -162,7 +162,7 @@ const LandingPage = () => {
                     whileHover={{ scale: 1.02, y: -5 }}
                     className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 max-w-2xl w-full shadow-2xl hover:shadow-blue-500/20 transition-all"
                   >
-                    <p className="text-2xl md:text-3xl lg:text-4xl font-light text-blue-100 leading-tight">
+                    <p className="text-2xl md:text-3xl lg:text-4xl font-light text-white/95 leading-tight">
                       ربط الموردين والتجار وشركات الشحن في نظام موثوق وآمن
                     </p>
                   </motion.div>
