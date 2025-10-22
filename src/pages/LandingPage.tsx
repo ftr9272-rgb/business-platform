@@ -100,7 +100,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         {/* Enhanced Background with richer gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-cyan-300 to-teal-300"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-500"></div>
         
         {/* Enhanced Animated glowing blobs */}
         <div className="absolute inset-0 opacity-40 pointer-events-none">
@@ -241,7 +241,7 @@ const LandingPage = () => {
               whileInView={{ scale: 1 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-300 bg-clip-text text-transparent mb-6"
+              className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 bg-clip-text text-transparent mb-6"
             >
               حلول متكاملة لجميع أطراف التجارة
             </motion.h2>
@@ -352,7 +352,7 @@ const LandingPage = () => {
       </div>
 
       {/* Enhanced Demo Section */}
-      <div className="py-32 bg-gradient-to-br from-blue-400 via-cyan-300 to-teal-300 relative overflow-hidden">
+      <div className="py-32 bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-500 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
