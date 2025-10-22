@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X, User, LogOut, Bell, Store, Truck, Box, Shield, Home } from 'lucide-react';
+import { Menu, X, User, LogOut, Bell, Store, Truck, Box, Shield, Home, ShoppingBag } from 'lucide-react';
 import ChatButton from './ChatButton';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -53,92 +53,51 @@ function Header() {
   }, []);
 
   return (
-    <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
+    <header className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 border-b border-slate-700/50 sticky top-0 z-50 shadow-lg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-18 relative">
-          {/* الشعار */}
-          <div className="flex items-center gap-4">
-            <Link to="/landing" className="flex items-center space-x-3 space-x-reverse group">
+        <div className="flex items-center justify-between h-16 sm:h-16 relative">
+          
+          {/* الشعار على اليمين */}
+          <div className="flex items-center gap-4 order-3 md:order-1">
+            <Link to="/landing" className="flex items-center space-x-2 space-x-reverse group">
               <motion.div
-                whileHover={{ scale: 1.08, rotate: 5 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center justify-center w-11 h-11 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300"
+                className="flex items-center gap-2"
               >
-                <svg viewBox="0 0 24 24" className="w-6 h-6 text-white">
-                  <path 
-                    fill="currentColor" 
-                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
-                  />
-                </svg>
+                <ShoppingBag className="w-7 h-7 text-blue-400" />
+                <span className="text-2xl font-bold text-white font-heading">تجارتنا الذكية</span>
               </motion.div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 bg-clip-text text-transparent font-heading">تجارتنا</span>
-                <span className="text-xs text-gray-500 font-arabic -mt-1">منصة التجارة الإلكترونية</span>
-              </div>
             </Link>
-            
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link 
-                to="/landing" 
-                title="العودة إلى الصفحة الرئيسية" 
-                aria-label="العودة إلى الصفحة الرئيسية" 
-                className="p-2 rounded-lg hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 group"
-              >
-                <Home className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
-              </Link>
-            </motion.div>
           </div>
 
-          {/* قائمة التنقل للشاشات الكبيرة */}
-          <nav className="hidden md:flex items-center space-x-6 space-x-reverse">
+          {/* قائمة التنقل في المنتصف */}
+          <nav className="hidden md:flex items-center space-x-6 space-x-reverse order-2">
             {!isAuthenticated ? (
               <>
                 <Link 
-                  to="/" 
-                  className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-arabic font-medium relative group"
+                  to="/enhanced-marketplace" 
+                  className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base"
                 >
-                  <span>الرئيسية</span>
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:w-full transition-all duration-300"></span>
+                  السوق المشترك
                 </Link>
                 
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link 
-                    to="/enhanced-marketplace" 
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-arabic font-medium shadow-md hover:shadow-lg transition-all duration-300 hover:from-emerald-600 hover:to-teal-700"
-                  >
-                    <Store className="w-4 h-4" />
-                    <span>السوق المشترك</span>
-                  </Link>
-                </motion.div>
-                
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link 
-                    to="/exhibitions" 
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 text-white font-arabic font-medium shadow-md hover:shadow-lg transition-all duration-300 hover:from-red-600 hover:to-pink-700"
-                  >
-                    <span>المعارض</span>
-                  </Link>
-                </motion.div>
-                
                 <Link 
-                  to="/contact" 
-                  className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-arabic font-medium relative group"
+                  to="/exhibitions" 
+                  className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base"
                 >
-                  <span>اتصل بنا</span>
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:w-full transition-all duration-300"></span>
+                  المعارض
                 </Link>
               </>
             ) : (
-              <div className="flex items-center space-x-3 space-x-reverse">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link 
-                    to="/enhanced-marketplace" 
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-500/15 to-purple-600/15 hover:from-blue-500/25 hover:to-purple-600/25 border border-blue-500/30 hover:border-blue-500/50 transition-all duration-300 font-arabic text-gray-700 hover:text-blue-600 shadow-sm hover:shadow-md"
-                  >
-                    <Store className="w-4 h-4" />
-                    <span className="font-medium">السوق المشترك</span>
-                  </Link>
-                </motion.div>
+              <div className="flex items-center space-x-4 space-x-reverse">
+                <Link 
+                  to="/enhanced-marketplace" 
+                  className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
+                >
+                  <Store className="w-4 h-4" />
+                  <span>السوق المشترك</span>
+                </Link>
 
                 {/* أيقونة الإشعارات */}
                 <div className="relative flex items-center gap-2">
@@ -147,11 +106,11 @@ function Header() {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => window.dispatchEvent(new Event('open-notifications'))} 
                     aria-label="فتح الإشعارات" 
-                    className="p-2.5 rounded-xl hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 relative group"
+                    className="p-2 rounded-lg hover:bg-slate-700/50 transition-all duration-300 relative"
                   >
-                    <Bell className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                    <Bell className="w-5 h-5 text-white" />
                     {headerNotifCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {headerNotifCount > 99 ? '99+' : headerNotifCount}
                       </span>
                     )}
@@ -170,58 +129,50 @@ function Header() {
                 
                 {/* روابط لوحات التحكم */}
                 {user?.role === 'shipping_company' && (
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link 
-                      to="/shipping" 
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-500/15 to-blue-500/10 hover:from-blue-500/25 hover:to-blue-500/15 border border-blue-500/30 hover:border-blue-500/50 transition-all duration-300 font-arabic text-gray-700 hover:text-blue-600 shadow-sm hover:shadow-md"
-                    >
-                      <Truck className="w-4 h-4" />
-                      <span className="font-medium">لوحة التحكم</span>
-                    </Link>
-                  </motion.div>
+                  <Link 
+                    to="/shipping" 
+                    className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
+                  >
+                    <Truck className="w-4 h-4" />
+                    <span>لوحة التحكم</span>
+                  </Link>
                 )}
                 
                 {user?.role === 'merchant' && (
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link 
-                      to="/merchant" 
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-green-500/15 to-green-500/10 hover:from-green-500/25 hover:to-green-500/15 border border-green-500/30 hover:border-green-500/50 transition-all duration-300 font-arabic text-gray-700 hover:text-green-600 shadow-sm hover:shadow-md"
-                    >
-                      <Store className="w-4 h-4" />
-                      <span className="font-medium">لوحة التحكم</span>
-                    </Link>
-                  </motion.div>
+                  <Link 
+                    to="/merchant" 
+                    className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
+                  >
+                    <Store className="w-4 h-4" />
+                    <span>لوحة التحكم</span>
+                  </Link>
                 )}
                 
                 {user?.role === 'supplier' && (
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link 
-                      to="/supplier" 
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-500/15 to-purple-500/10 hover:from-purple-500/25 hover:to-purple-500/15 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300 font-arabic text-gray-700 hover:text-purple-600 shadow-sm hover:shadow-md"
-                    >
-                      <Box className="w-4 h-4" />
-                      <span className="font-medium">لوحة التحكم</span>
-                    </Link>
-                  </motion.div>
+                  <Link 
+                    to="/supplier" 
+                    className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
+                  >
+                    <Box className="w-4 h-4" />
+                    <span>لوحة التحكم</span>
+                  </Link>
                 )}
                 
                 {user?.role === 'admin' && (
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link 
-                      to="/admin" 
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-500/15 to-red-500/10 hover:from-red-500/25 hover:to-red-500/15 border border-red-500/30 hover:border-red-500/50 transition-all duration-300 font-arabic text-gray-700 hover:text-red-600 shadow-sm hover:shadow-md"
-                    >
-                      <Shield className="w-4 h-4" />
-                      <span className="font-medium">لوحة التحكم</span>
-                    </Link>
-                  </motion.div>
+                  <Link 
+                    to="/admin" 
+                    className="text-white hover:text-blue-300 transition-all duration-300 font-arabic font-medium text-base flex items-center gap-2"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span>لوحة التحكم</span>
+                  </Link>
                 )}
               </div>
             )}
           </nav>
 
-          {/* أدوات الهيدر */}
-          <div className="flex items-center space-x-3 space-x-reverse">
+          {/* الأزرار على اليسار */}
+          <div className="flex items-center space-x-3 space-x-reverse order-1 md:order-3">
             {isAuthenticated ? (
               <div className="relative flex items-center gap-2">
                 <div className="relative">
@@ -229,12 +180,12 @@ function Header() {
                     whileHover={{ scale: 1.05 }} 
                     whileTap={{ scale: 0.95 }} 
                     onClick={toggleProfile} 
-                    className="flex items-center space-x-2 space-x-reverse px-3 py-2 rounded-xl bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-200"
+                    className="flex items-center space-x-2 space-x-reverse px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all duration-300 border border-slate-600"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-md">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                       <User className="w-4 h-4 text-white" />
                     </div>
-                    <span className="hidden sm:block text-sm font-arabic text-gray-700 font-medium">{user?.name}</span>
+                    <span className="hidden sm:block text-sm font-arabic text-white font-medium">{user?.name}</span>
                   </motion.button>
 
                   {isProfileOpen && (
@@ -242,13 +193,13 @@ function Header() {
                       initial={{ opacity: 0, y: -10, scale: 0.95 }} 
                       animate={{ opacity: 1, y: 0, scale: 1 }} 
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-2xl py-2 overflow-hidden"
+                      className="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl py-2 overflow-hidden"
                     >
-                      <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-                        <p className="text-sm font-arabic text-gray-800 font-bold">{user?.name}</p>
-                        <p className="text-xs text-gray-600 mt-0.5">{user?.email}</p>
+                      <div className="px-4 py-3 bg-slate-700/50 border-b border-slate-600">
+                        <p className="text-sm font-arabic text-white font-bold">{user?.name}</p>
+                        <p className="text-xs text-slate-300 mt-0.5">{user?.email}</p>
                         {user?.role && (
-                          <span className="inline-block mt-2 px-3 py-1 bg-white rounded-full text-xs text-blue-600 font-medium shadow-sm">
+                          <span className="inline-block mt-2 px-3 py-1 bg-blue-500/20 rounded-full text-xs text-blue-300 font-medium border border-blue-500/30">
                             {getRoleDisplayName()}
                           </span>
                         )}
@@ -256,16 +207,16 @@ function Header() {
 
                       <Link 
                         to="/profile" 
-                        className="flex items-center space-x-2 space-x-reverse px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 font-arabic group" 
+                        className="flex items-center space-x-2 space-x-reverse px-4 py-3 text-sm text-slate-200 hover:bg-slate-700/50 transition-all duration-300 font-arabic group" 
                         onClick={() => setIsProfileOpen(false)}
                       >
-                        <User className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
-                        <span className="group-hover:text-blue-600 transition-colors">الملف الشخصي</span>
+                        <User className="w-4 h-4 text-slate-400 group-hover:text-blue-400 transition-colors" />
+                        <span className="group-hover:text-white transition-colors">الملف الشخصي</span>
                       </Link>
 
                       <button 
                         onClick={handleLogout} 
-                        className="flex items-center space-x-2 space-x-reverse px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-all duration-300 w-full font-arabic group"
+                        className="flex items-center space-x-2 space-x-reverse px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-all duration-300 w-full font-arabic group"
                       >
                         <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
                         <span>تسجيل الخروج</span>
@@ -276,16 +227,19 @@ function Header() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <Link 
-                  to="/contact" 
-                  className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-arabic font-medium"
-                >
-                  تسجيل الدخول
-                </Link>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Link 
                     to="/contact" 
-                    className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-5 py-2.5 rounded-xl hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 font-arabic font-medium shadow-md hover:shadow-lg"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg transition-all duration-300 font-arabic font-medium shadow-lg hover:shadow-xl text-base"
+                  >
+                    تسجيل الدخول
+                  </Link>
+                </motion.div>
+                
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link 
+                    to="/contact" 
+                    className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-lg transition-all duration-300 font-arabic font-medium shadow-lg hover:shadow-xl text-base"
                   >
                     إنشاء حساب
                   </Link>
@@ -297,10 +251,10 @@ function Header() {
               whileHover={{ scale: 1.05 }} 
               whileTap={{ scale: 0.95 }} 
               onClick={toggleMenu} 
-              className="md:hidden p-2 rounded-xl bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 transition-all duration-300 shadow-sm" 
+              className="md:hidden p-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all duration-300" 
               aria-label="قائمة التنقل"
             >
-              {isMenuOpen ? <X className="w-5 h-5 text-gray-700" /> : <Menu className="w-5 h-5 text-gray-700" />}
+              {isMenuOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
             </motion.button>
           </div>
         </div>
@@ -311,45 +265,30 @@ function Header() {
             initial={{ opacity: 0, height: 0 }} 
             animate={{ opacity: 1, height: 'auto' }} 
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden py-4 border-t border-gray-200 bg-gradient-to-b from-white to-gray-50 rounded-b-xl"
+            className="md:hidden py-4 border-t border-slate-700/50 bg-slate-800/50 rounded-b-xl"
           >
             {!isAuthenticated ? (
               <div className="flex flex-col space-y-2">
                 <Link 
-                  to="/" 
-                  className="text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  الرئيسية
-                </Link>
-                <Link 
                   to="/enhanced-marketplace" 
-                  className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                  className="text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <Store className="w-4 h-4" />
-                  <span>السوق المشترك</span>
+                  السوق المشترك
                 </Link>
                 <Link 
                   to="/exhibitions" 
-                  className="text-gray-700 hover:text-red-600 hover:bg-red-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                  className="text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   المعارض
-                </Link>
-                <Link 
-                  to="/contact" 
-                  className="text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  اتصل بنا
                 </Link>
               </div>
             ) : (
               <div className="flex flex-col space-y-2">
                 <Link 
                   to="/enhanced-marketplace" 
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                  className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <Store className="w-4 h-4" />
@@ -359,7 +298,7 @@ function Header() {
                 {user?.role === 'shipping_company' && (
                   <Link 
                     to="/shipping" 
-                    className="flex items-center gap-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                    className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Truck className="w-4 h-4" />
@@ -370,7 +309,7 @@ function Header() {
                 {user?.role === 'merchant' && (
                   <Link 
                     to="/merchant" 
-                    className="flex items-center gap-2 text-gray-700 hover:text-green-600 hover:bg-green-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                    className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Store className="w-4 h-4" />
@@ -381,7 +320,7 @@ function Header() {
                 {user?.role === 'supplier' && (
                   <Link 
                     to="/supplier" 
-                    className="flex items-center gap-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                    className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Box className="w-4 h-4" />
@@ -392,7 +331,7 @@ function Header() {
                 {user?.role === 'admin' && (
                   <Link 
                     to="/admin" 
-                    className="flex items-center gap-2 text-gray-700 hover:text-red-600 hover:bg-red-50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
+                    className="flex items-center gap-2 text-white hover:text-blue-300 hover:bg-slate-700/50 px-4 py-3 rounded-lg transition-all duration-300 font-arabic font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Shield className="w-4 h-4" />
