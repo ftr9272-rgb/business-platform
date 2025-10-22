@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Truck, Plus, Minus, User, Phone, Package, DollarSign, MapPin, Clock, ShoppingCart } from 'lucide-react';
 import Modal from './Modal';
 import toast from 'react-hot-toast';
-import { storage } from '../utils/localStorage';
+import { shippingService } from '../services/shipping.service';
 
 interface AddShippingOrderModalProps {
   isOpen: boolean;
@@ -64,8 +64,6 @@ const AddShippingOrderModal: React.FC<AddShippingOrderModalProps> = ({ isOpen, o
 
     setIsSubmitting(true);
     try {
-      await new Promise(r => setTimeout(r, 300));
-
       // حساب القيمة الإجمالية من المنتجات
       const totalValue = validItems.reduce((sum, item) => 
         sum + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0
@@ -75,57 +73,40 @@ const AddShippingOrderModal: React.FC<AddShippingOrderModalProps> = ({ isOpen, o
         `${item.name} (×${item.quantity})`
       ).join('، ');
 
-      onAdd({
-        customerName: '', // لن يُستخدم - الطلب من التاجر نفسه
-        customerPhone: formData.contactPhone || '', // رقم للتواصل فقط
-        merchant: '', // سيتم ملؤه من معلومات المستخدم الحالي
-        packageDescription: productsDescription,
-        value: totalValue,
-        priority: 'متوسطة', // افتراضي
-        deliveryTime: '',
-        vehicleType: '',
-        specialInstructions: formData.notes || '',
-        cashOnDelivery: formData.cashOnDelivery,
-        codAmount: Number(formData.codAmount) || 0,
-        pickupAddress: formData.pickupAddress,
-        destination: formData.destination,
-        weight: '',
-        dimensions: '',
-        publishToMarketplace: publishToMarketplace,
-        publishScope: publishScope,
-        products: validItems.map(i => ({
-          name: i.name,
-          price: Number(i.price) || 0,
-          quantity: Number(i.quantity) || 1
-        }))
+      // إرسال الطلب إلى الواجهة الخلفية
+      const response = await shippingService.createShipment({
+        userType: 'merchant',
+        pickupAddress: {
+          street: formData.pickupAddress,
+          contactPhone: formData.contactPhone
+        },
+        deliveryAddress: {
+          street: formData.destination
+        },
+        packageDetails: {
+          description: productsDescription,
+          value: totalValue
+        },
+        shippingType: 'standard',
+        status: 'pending',
+        notes: formData.notes,
+        currency: 'SAR'
       });
 
-      if (publishToMarketplace) {
-        toast.success('✅ تم نشر طلب الشحن في السوق المشترك!');
-      } else {
-        toast.success('✅ تم حفظ طلب الشحن بنجاح!');
+      if (response.success) {
+        toast.success('تم إنشاء طلب الشحن بنجاح');
+        onAdd(response.data.shipment);
+        onClose();
       }
-
-      // Reset form
-      setFormData({
-        pickupAddress: '',
-        destination: '',
-        contactPhone: '',
-        notes: '',
-        cashOnDelivery: false,
-        codAmount: ''
-      });
-      setOrderItems([{ name: '', price: '', quantity: '1' }]);
-      setPublishToMarketplace(true);
-      setPublishScope('عام');
-      onClose();
-    } catch (err) {
-      console.error(err);
-      toast.error('حدث خطأ أثناء إضافة الطلب. حاول مرة أخرى.');
+    } catch (error: any) {
+      console.error('Error creating shipment:', error);
+      toast.error(error.message || 'حدث خطأ أثناء إنشاء طلب الشحن');
     } finally {
       setIsSubmitting(false);
     }
   };
+
+
 
   return (
     <Modal

@@ -1,5 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../services/auth.service';
+import toast from 'react-hot-toast';
 
 // أنواع البيانات
 export interface User {
@@ -80,17 +82,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      // محاكاة استدعاء API
-      const response = await mockLoginAPI(email, password);
+      // استدعاء API الحقيقي
+      const response = await authService.login({ email, password });
       
-      const { user: userData, token: userToken } = response;
-      
-      setUser(userData);
-      setToken(userToken);
-      
-      localStorage.setItem(TOKEN_KEY, userToken);
-      localStorage.setItem(USER_KEY, JSON.stringify(userData));
-    } catch (error) {
+      if (response.success && response.data.user) {
+        const userData: User = {
+          id: response.data.user.id,
+          email: response.data.user.email,
+          name: response.data.user.name,
+          role: response.data.user.role as any,
+          phone: response.data.user.phone,
+          isVerified: response.data.user.isVerified,
+          createdAt: new Date().toISOString()
+        };
+        
+        setUser(userData);
+        setToken(response.token);
+        
+        localStorage.setItem(TOKEN_KEY, response.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(userData));
+        
+        toast.success(`مرحباً ${userData.name}!`);
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error.message || 'فشل تسجيل الدخول');
       throw error;
     } finally {
       setIsLoading(false);
@@ -101,17 +117,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const register = async (userData: RegisterData): Promise<void> => {
     setIsLoading(true);
     try {
-      // محاكاة استدعاء API
-      const response = await mockRegisterAPI(userData);
+      // استدعاء API الحقيقي
+      const response = await authService.register({
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        role: userData.role,
+        phone: userData.phone
+      });
       
-      const { user: newUser, token: userToken } = response;
-      
-      setUser(newUser);
-      setToken(userToken);
-      
-      localStorage.setItem(TOKEN_KEY, userToken);
-      localStorage.setItem(USER_KEY, JSON.stringify(newUser));
-    } catch (error) {
+      if (response.success && response.data.user) {
+        const newUser: User = {
+          id: response.data.user.id,
+          email: response.data.user.email,
+          name: response.data.user.name,
+          role: response.data.user.role as any,
+          phone: response.data.user.phone,
+          isVerified: response.data.user.isVerified,
+          createdAt: new Date().toISOString()
+        };
+        
+        setUser(newUser);
+        setToken(response.token);
+        
+        localStorage.setItem(TOKEN_KEY, response.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+        
+        toast.success(`مرحباً ${newUser.name}! تم إنشاء حسابك بنجاح`);
+      }
+    } catch (error: any) {
+      console.error('Register error:', error);
+      toast.error(error.message || 'فشل إنشاء الحساب');
       throw error;
     } finally {
       setIsLoading(false);

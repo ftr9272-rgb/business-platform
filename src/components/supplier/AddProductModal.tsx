@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { X, Plus, Minus, Box, Tag, Layers, FileText, Calendar, Shield, Truck, Package as PackageIcon } from 'lucide-react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { productsService } from '../../services/products.service';
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -99,18 +101,41 @@ function AddProductModal({ isOpen, onClose, onSave }: AddProductModalProps) {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
-      ...form,
-      id: `PRD-${Date.now()}`,
-      status: 'active',
-      rating: 0,
-      sales: 0,
-      merchants: 0,
-      createdAt: new Date().toISOString()
-    });
-    onClose();
+    setIsSubmitting(true);
+
+    try {
+      // إرسال البيانات إلى الواجهة الخلفية
+      const response = await productsService.createProduct({
+        name: form.name,
+        description: form.description,
+        category: form.category,
+        price: form.price,
+        stockQuantity: form.stock,
+        tags: form.tags,
+        images: form.images,
+        minimumOrderQuantity: {
+          quantity: form.minOrder,
+          unit: 'قطعة'
+        },
+        inStock: form.stock > 0,
+        isActive: true
+      });
+
+      if (response.success) {
+        toast.success('تم إضافة المنتج بنجاح');
+        onSave(response.data.product);
+        onClose();
+      }
+    } catch (error: any) {
+      console.error('Error creating product:', error);
+      toast.error(error.message || 'حدث خطأ أثناء إضافة المنتج');
+    } finally {
+      setIsSubmitting(false);
+    }
     // إعادة تعيين النموذج
     setForm({
       name: '',
