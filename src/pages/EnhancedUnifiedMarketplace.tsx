@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { marketplaceManager } from '../utils/marketplaceManager';
 import { storage } from '../utils/localStorage';
+import { marketplaceService } from '../services/marketplace.service';
 import type { SupplierOffer, MerchantRequest, ShippingServiceOffer, MarketplaceFilters } from '../types/marketplace';
 import type { MarketItem, MerchantOrder, ShippingService } from '../utils/localStorage';
 import toast from 'react-hot-toast';
@@ -82,76 +83,161 @@ const EnhancedUnifiedMarketplace = () => {
     };
   }, [user, filters]);
 
-  // تحميل جميع البيانات
-  const loadAllData = () => {
-    // البيانات الذكية الحديثة
-    setSupplierOffers(marketplaceManager.getSupplierOffers(filters));
-    setMerchantRequests(marketplaceManager.getMerchantRequests(filters));
-    setShippingServices(marketplaceManager.getShippingServices(filters));
-    
-    // البيانات التقليدية للتوافق
-    setTraditionalOrders(storage.getMerchantOrders());
-    setTraditionalShipping(storage.getShippingServices());
-  };
-
-  // تحميل التوصيات الذكية
-  const loadRecommendations = () => {
-    if (user) {
-      const recs = marketplaceManager.getRecommendations(user.id, activeTab as any);
-      setRecommendations(recs);
+  // تحميل جميع البيانات من API
+  const loadAllData = async () => {
+    try {
+      // البيانات من API
+      const [offers, requests, services] = await Promise.all([
+        marketplaceService.getSupplierOffers(filters),
+        marketplaceService.getMerchantRequests(filters),
+        marketplaceService.getShippingServices(filters)
+      ]);
+      
+      setSupplierOffers(offers);
+      setMerchantRequests(requests);
+      setShippingServices(services);
+      
+      // البيانات التقليدية للتوافق (fallback)
+      if (offers.length === 0) {
+        setSupplierOffers(marketplaceManager.getSupplierOffers(filters));
+      }
+      if (requests.length === 0) {
+        setMerchantRequests(marketplaceManager.getMerchantRequests(filters));
+      }
+      if (services.length === 0) {
+        setShippingServices(marketplaceManager.getShippingServices(filters));
+      }
+      
+      setTraditionalOrders(storage.getMerchantOrders());
+      setTraditionalShipping(storage.getShippingServices());
+    } catch (error) {
+      console.error('Error loading marketplace data:', error);
+      // Fallback to localStorage
+      setSupplierOffers(marketplaceManager.getSupplierOffers(filters));
+      setMerchantRequests(marketplaceManager.getMerchantRequests(filters));
+      setShippingServices(marketplaceManager.getShippingServices(filters));
     }
   };
 
-  // تحميل معارض الموردين
-  const loadExhibitions = () => {
-    const allExhibitions: any[] = [];
-    const keys = Object.keys(localStorage);
-    const exhibitionKeys = keys.filter(key => key.startsWith('exhibitions_'));
-    
-    exhibitionKeys.forEach(key => {
+  // تحميل التوصيات الذكية من API
+  const loadRecommendations = async () => {
+    if (user) {
       try {
-        const stored = localStorage.getItem(key);
-        if (stored) {
-          const supplierExhibitions = JSON.parse(stored);
-          const publicExhibitions = supplierExhibitions.filter(
-            (exh: any) => exh.visibility === 'public'
-          );
-          allExhibitions.push(...publicExhibitions);
+        const recs = await marketplaceService.getRecommendations(user.id, activeTab as any);
+        if (recs && recs.length > 0) {
+          setRecommendations(recs);
+        } else {
+          // Fallback to localStorage
+          const localRecs = marketplaceManager.getRecommendations(user.id, activeTab as any);
+          setRecommendations(localRecs);
         }
       } catch (error) {
-        console.error('Error loading exhibitions:', error);
+        console.error('Error loading recommendations:', error);
+        const localRecs = marketplaceManager.getRecommendations(user.id, activeTab as any);
+        setRecommendations(localRecs);
       }
-    });
-    
-    // إضافة معارض وهمية للعرض إذا لم توجد معارض حقيقية
-    if (allExhibitions.length === 0) {
-      const demoExhibitions = generateDemoExhibitions();
-      allExhibitions.push(...demoExhibitions);
     }
-    
-    setExhibitions(allExhibitions);
   };
 
-  // تحميل إحصائيات السوق
-  const loadMarketStats = () => {
-    const stats = {
-      totalOffers: supplierOffers.length,
-      totalRequests: merchantRequests.length + traditionalOrders.length,
-      totalShipping: shippingServices.length + traditionalShipping.length,
-      totalExhibitions: exhibitions.length
-    };
-    setMarketStats(stats);
-  };
-
-  // تحميل المفضلة من التخزين المحلي
-  const loadFavorites = () => {
+  // تحميل معارض الموردين من API
+  const loadExhibitions = async () => {
     try {
-      const savedFavorites = localStorage.getItem(`marketplace_favorites_${user?.id || 'guest'}`);
-      if (savedFavorites) {
-        setFavorites(new Set(JSON.parse(savedFavorites)));
+      const apiExhibitions = await marketplaceService.getExhibitions({ status: 'active' });
+      
+      if (apiExhibitions && apiExhibitions.length > 0) {
+        setExhibitions(apiExhibitions);
+        return;
+      }
+      
+      // Fallback to localStorage
+      const allExhibitions: any[] = [];
+      const keys = Object.keys(localStorage);
+      const exhibitionKeys = keys.filter(key => key.startsWith('exhibitions_'));
+      
+      exhibitionKeys.forEach(key => {
+        try {
+          const stored = localStorage.getItem(key);
+          if (stored) {
+            const supplierExhibitions = JSON.parse(stored);
+            const publicExhibitions = supplierExhibitions.filter(
+              (exh: any) => exh.visibility === 'public'
+            );
+            allExhibitions.push(...publicExhibitions);
+          }
+        } catch (error) {
+          console.error('Error loading exhibitions:', error);
+        }
+      });
+      
+      // إضافة معارض وهمية للعرض إذا لم توجد معارض حقيقية
+      if (allExhibitions.length === 0) {
+        const demoExhibitions = generateDemoExhibitions();
+        allExhibitions.push(...demoExhibitions);
+      }
+      
+      setExhibitions(allExhibitions);
+    } catch (error) {
+      console.error('Error loading exhibitions from API:', error);
+      // Fallback to demo data
+      const demoExhibitions = generateDemoExhibitions();
+      setExhibitions(demoExhibitions);
+    }
+  };
+
+  // تحميل إحصائيات السوق من API
+  const loadMarketStats = async () => {
+    try {
+      const apiStats = await marketplaceService.getMarketStats();
+      if (apiStats && Object.keys(apiStats).length > 0) {
+        setMarketStats(apiStats);
+      } else {
+        // Fallback to local calculation
+        const stats = {
+          totalOffers: supplierOffers.length,
+          totalRequests: merchantRequests.length + traditionalOrders.length,
+          totalShipping: shippingServices.length + traditionalShipping.length,
+          totalExhibitions: exhibitions.length
+        };
+        setMarketStats(stats);
+      }
+    } catch (error) {
+      console.error('Error loading market stats:', error);
+      const stats = {
+        totalOffers: supplierOffers.length,
+        totalRequests: merchantRequests.length + traditionalOrders.length,
+        totalShipping: shippingServices.length + traditionalShipping.length,
+        totalExhibitions: exhibitions.length
+      };
+      setMarketStats(stats);
+    }
+  };
+
+  // تحميل المفضلة من API
+  const loadFavorites = async () => {
+    if (!user) return;
+    
+    try {
+      const apiFavorites = await marketplaceService.getFavorites(user.id);
+      if (apiFavorites && apiFavorites.length > 0) {
+        setFavorites(new Set(apiFavorites));
+      } else {
+        // Fallback to localStorage
+        const savedFavorites = localStorage.getItem(`marketplace_favorites_${user.id}`);
+        if (savedFavorites) {
+          setFavorites(new Set(JSON.parse(savedFavorites)));
+        }
       }
     } catch (error) {
       console.error('Error loading favorites:', error);
+      // Fallback to localStorage
+      try {
+        const savedFavorites = localStorage.getItem(`marketplace_favorites_${user.id}`);
+        if (savedFavorites) {
+          setFavorites(new Set(JSON.parse(savedFavorites)));
+        }
+      } catch (e) {
+        console.error('Error loading favorites from localStorage:', e);
+      }
     }
   };
 
