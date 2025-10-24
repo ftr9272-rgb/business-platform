@@ -64,8 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
           
-          // التحقق من صحة الرمز المميز
-          await validateToken(storedToken);
+          // TODO: إضافة التحقق من صحة الرمز مع Backend API
         }
       } catch (error) {
         console.error('خطأ في تهيئة المصادقة:', error);
@@ -192,10 +191,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const refreshToken = async (): Promise<void> => {
     try {
       if (token) {
-        // محاكاة تجديد الرمز المميز
-        const newToken = await mockRefreshTokenAPI(token);
-        setToken(newToken);
-        localStorage.setItem(TOKEN_KEY, newToken);
+        // TODO: إضافة API حقيقي لتجديد الرمز
+        console.log('تجديد الرمز يحتاج إلى Backend API');
       }
     } catch (error) {
       console.error('خطأ في تجديد الرمز المميز:', error);
@@ -227,149 +224,3 @@ export function useAuth(): AuthContextType {
   return context;
 }
 
-// دوال محاكاة API (ستستبدل بالدوال الحقيقية لاحقاً)
-async function mockLoginAPI(email: string, password: string) {
-  // محاكاة تأخير الشبكة
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // التحقق من بيانات الاعتماد الوهمية
-  const mockUsers: Record<string, { password: string; user: User }> = {
-    'merchant@example.com': {
-      password: 'password123',
-      user: {
-        id: '1',
-        email: 'merchant@example.com',
-        name: 'أحمد محمد',
-        role: 'merchant',
-        companyName: 'شركة التجارة المتقدمة',
-        phone: '+966501234567',
-        isVerified: true,
-        createdAt: new Date().toISOString(),
-      }
-    },
-    'merchant@demo.com': {
-      password: 'password123',
-      user: {
-        id: 'demo_merchant',
-        email: 'merchant@demo.com',
-        name: 'تاجر تجريبي',
-        role: 'merchant',
-        companyName: 'متجر التجارة التجريبي',
-        phone: '+966501111111',
-        isVerified: true,
-        createdAt: new Date().toISOString(),
-      }
-    },
-    'supplier@example.com': {
-      password: 'password123',
-      user: {
-        id: '2',
-        email: 'supplier@example.com',
-        name: 'سارة أحمد',
-        role: 'supplier',
-        companyName: 'مورد الجودة العالية',
-        phone: '+966507654321',
-        isVerified: true,
-        createdAt: new Date().toISOString(),
-      }
-    },
-    'supplier@demo.com': {
-      password: 'password123',
-      user: {
-        id: 'demo_supplier',
-        email: 'supplier@demo.com',
-        name: 'مورد تجريبي',
-        role: 'supplier',
-        companyName: 'شركة الإمداد التجريبية',
-        phone: '+966502222222',
-        isVerified: true,
-        createdAt: new Date().toISOString(),
-      }
-    },
-    'shipping@example.com': {
-      password: 'password123',
-      user: {
-        id: '3',
-        email: 'shipping@example.com',
-        name: 'خالد الشحن',
-        role: 'shipping_company',
-        companyName: 'شركة الشحن السريع 🚛',
-        phone: '+966509876543',
-        isVerified: true,
-        createdAt: new Date().toISOString(),
-      }
-    },
-    'shipping@demo.com': {
-      password: 'password123',
-      user: {
-        id: 'demo_shipping',
-        email: 'shipping@demo.com',
-        name: 'شركة شحن تجريبية',
-        role: 'shipping_company',
-        companyName: 'الشحن السريع التجريبي 🚛',
-        phone: '+966503333333',
-        isVerified: true,
-        createdAt: new Date().toISOString(),
-      }
-    },
-    'admin@example.com': {
-      password: 'password123',
-      user: {
-        id: '4',
-        email: 'admin@example.com',
-        name: 'مدير النظام',
-        role: 'admin',
-        isVerified: true,
-        createdAt: new Date().toISOString(),
-      }
-    }
-  };
-
-  const mockUser = mockUsers[email];
-  if (!mockUser || mockUser.password !== password) {
-    throw new Error('بيانات الاعتماد غير صحيحة');
-  }
-
-  return {
-    user: mockUser.user,
-    token: `mock_token_${Date.now()}`
-  };
-}
-
-async function mockRegisterAPI(userData: RegisterData) {
-  // محاكاة تأخير الشبكة
-  await new Promise(resolve => setTimeout(resolve, 1500));
-
-  // التحقق من وجود البريد الإلكتروني
-  if (userData.email === 'existing@example.com') {
-    throw new Error('هذا البريد الإلكتروني مُستخدم بالفعل');
-  }
-
-  const newUser: User = {
-    id: `user_${Date.now()}`,
-    email: userData.email,
-    name: userData.name,
-    role: userData.role,
-    companyName: userData.companyName,
-    phone: userData.phone,
-    isVerified: false,
-    createdAt: new Date().toISOString(),
-  };
-
-  return {
-    user: newUser,
-    token: `mock_token_${Date.now()}`
-  };
-}
-
-async function validateToken(token: string): Promise<boolean> {
-  // محاكاة التحقق من الرمز المميز
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return token.startsWith('mock_token_');
-}
-
-async function mockRefreshTokenAPI(oldToken: string): Promise<string> {
-  // محاكاة تجديد الرمز المميز
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return `refreshed_token_${Date.now()}`;
-}

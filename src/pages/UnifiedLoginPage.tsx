@@ -160,16 +160,7 @@ const UnifiedLoginPage = () => {
               تغيير نوع الحساب
             </button>
             
-            {/* Demo Credentials Section */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-              <h3 className="text-sm font-semibold text-blue-800 mb-3">🚀 المنصة في الوضع التجريبي</h3>
-              <div className="text-xs text-blue-700 space-y-2">
-                <div className="bg-white/70 p-2 rounded">
-                  <div className="font-medium">بيانات الدخول التجريبية:</div>
-                  <div>{role}@demo.com | password123</div>
-                </div>
-              </div>
-            </div>
+
           </div>
 
           {error && (
