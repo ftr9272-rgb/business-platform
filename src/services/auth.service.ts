@@ -36,22 +36,90 @@ export interface AuthResponse {
 }
 
 class AuthService {
+  // Demo accounts للاختبار
+  private demoAccounts = [
+    {
+      email: 'merchant@demo.com',
+      password: 'password123',
+      user: {
+        id: 'demo-merchant-1',
+        name: 'تاجر تجريبي',
+        email: 'merchant@demo.com',
+        role: 'merchant',
+        isActive: true,
+        isVerified: true
+      }
+    },
+    {
+      email: 'supplier@demo.com',
+      password: 'password123',
+      user: {
+        id: 'demo-supplier-1',
+        name: 'مورد تجريبي',
+        email: 'supplier@demo.com',
+        role: 'supplier',
+        isActive: true,
+        isVerified: true
+      }
+    },
+    {
+      email: 'shipping@demo.com',
+      password: 'password123',
+      user: {
+        id: 'demo-shipping-1',
+        name: 'شركة شحن تجريبية',
+        email: 'shipping@demo.com',
+        role: 'shipping_company',
+        isActive: true,
+        isVerified: true
+      }
+    }
+  ];
+
   /**
    * تسجيل الدخول
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await apiService.post<AuthResponse>(
-      API_ENDPOINTS.AUTH.LOGIN,
-      credentials
-    );
-    
-    // حفظ token والمستخدم في localStorage
-    if (response.success && response.token) {
-      localStorage.setItem('auth_token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    try {
+      // محاولة الاتصال بـ Backend API
+      const response = await apiService.post<AuthResponse>(
+        API_ENDPOINTS.AUTH.LOGIN,
+        credentials
+      );
+      
+      // حفظ token والمستخدم في localStorage
+      if (response.success && response.token) {
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      
+      return response;
+    } catch (error) {
+      // Fallback: التحقق من Demo accounts
+      const demoAccount = this.demoAccounts.find(
+        acc => acc.email === credentials.email && acc.password === credentials.password
+      );
+      
+      if (demoAccount) {
+        const demoToken = `demo-token-${demoAccount.user.id}-${Date.now()}`;
+        const response: AuthResponse = {
+          success: true,
+          token: demoToken,
+          data: {
+            user: demoAccount.user
+          }
+        };
+        
+        // حفظ token والمستخدم في localStorage
+        localStorage.setItem('auth_token', demoToken);
+        localStorage.setItem('user', JSON.stringify(demoAccount.user));
+        
+        return response;
+      }
+      
+      // إذا فشل كل شيء
+      throw error;
     }
-    
-    return response;
   }
 
   /**

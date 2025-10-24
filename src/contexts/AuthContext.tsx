@@ -103,6 +103,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.setItem(USER_KEY, JSON.stringify(userData));
         
         toast.success(`مرحباً ${userData.name}!`);
+        
+        // التوجيه التلقائي بناءً على دور المستخدم
+        const roleRoutes: Record<string, string> = {
+          'merchant': '/merchant',
+          'supplier': '/supplier',
+          'shipping_company': '/shipping',
+          'admin': '/admin'
+        };
+        
+        const targetRoute = roleRoutes[userData.role] || '/merchant';
+        navigate(targetRoute);
       }
     } catch (error: any) {
       console.error('Login error:', error);
