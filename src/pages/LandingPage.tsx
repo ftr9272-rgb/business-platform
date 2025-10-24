@@ -3,11 +3,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, Star, Users, TrendingUp, Shield, BarChart3, Globe, Zap, Truck, ShoppingCart, Package, Award, Clock, Headphones, LogIn, Phone } from 'lucide-react';
 import { useState } from 'react';
+import AuthModal from '../components/AuthModal';
 
 const LandingPage = () => {
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
   const handleDemoLogin = async (email: string, password: string, role: string) => {
     setIsLoading(role);
@@ -189,22 +192,28 @@ const LandingPage = () => {
                 ) : (
                   <>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Link 
-                        to="/contact"
+                      <button 
+                        onClick={() => {
+                          setAuthMode('register');
+                          setShowAuthModal(true);
+                        }}
                         className="group bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 text-white px-10 py-5 rounded-2xl hover:from-cyan-600 hover:via-blue-600 hover:to-indigo-700 transition-all font-bold text-lg shadow-2xl hover:shadow-cyan-500/50 flex items-center justify-center transform hover:-translate-y-1 duration-300"
                       >
                         إنشاء حساب مجاني
                         <ArrowRight className="mr-3 w-6 h-6 group-hover:mr-4 transition-all" />
-                      </Link>
+                      </button>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Link 
-                        to="/contact"
+                      <button 
+                        onClick={() => {
+                          setAuthMode('login');
+                          setShowAuthModal(true);
+                        }}
                         className="group bg-white/15 backdrop-blur-md border-2 border-white/30 text-white px-10 py-5 rounded-2xl hover:bg-white/25 hover:border-white/50 transition-all font-bold text-lg flex items-center justify-center transform hover:-translate-y-1 duration-300 shadow-lg"
                       >
                         تسجيل الدخول
                         <LogIn className="mr-3 w-6 h-6 group-hover:mr-4 transition-all" />
-                      </Link>
+                      </button>
                     </motion.div>
                   </>
                 )}
@@ -654,6 +663,13 @@ const LandingPage = () => {
           );
         })()
       }
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode={authMode}
+      />
     </div>
   );
 };
