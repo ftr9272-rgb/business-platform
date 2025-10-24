@@ -83,24 +83,6 @@ function App() {
               />
               
               <Route 
-                path="/login" 
-                element={
-                  <PublicRoute>
-                    <UnifiedLoginPage />
-                  </PublicRoute>
-                } 
-              />
-              
-              <Route 
-                path="/register" 
-                element={
-                  <PublicRoute>
-                    <UnifiedRegisterPage />
-                  </PublicRoute>
-                } 
-              />
-              
-              <Route 
                 path="/about" 
                 element={
                   <PublicRoute>
@@ -114,15 +96,6 @@ function App() {
                 element={
                   <PublicRoute>
                     <ServicesPage />
-                  </PublicRoute>
-                } 
-              />
-              
-              <Route 
-                path="/contact" 
-                element={
-                  <PublicRoute>
-                    <ContactPage />
                   </PublicRoute>
                 } 
               />
